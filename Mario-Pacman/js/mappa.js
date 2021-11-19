@@ -5,9 +5,7 @@
 var ominoX = 0; 
 var ominoY = 0;
 
-// posizione dell'arma
-var armaX = 9; 
-var armaY = 9;
+
 
 //posizione iniziale cacciatore Bowser
 var cacciatoreX = 8;
@@ -17,6 +15,10 @@ var cacciatoreY = 8;
 var cacciatoreBooX = 5;
 var cacciatoreBooY = 12;
 
+// posizione iniziale cacciatore Wario
+var cacciatoreWarioX = 19;
+var cacciatoreWarioY = 19;
+
 // valore iniziale dell'energia
 var energia = 200;
 
@@ -25,14 +27,20 @@ var PILLOLA = 1;
 var DELTA_ENERGIA = 20;
 var OSTACOLO=3; 
 var SFONDO = 0;
-var ARMA=2;
-var SPINE=5; 
+
 
 var FUNGO=6;
 var BANANA=7;
 
-var omino = "omino";
-var ominoConSpada = "ominoConSpada";
+
+var ominoDX = "ominoDX";
+
+var ominoSX = "ominoSX";
+
+var ominoSU = "ominoSU";
+
+var ominoGIU = "ominoGIU";
+
 
 var pathImg = "img1/";
 
@@ -55,16 +63,36 @@ for (var i=0; i<R; i++) {
 	}
 }
 
+function clear(){
+
+	for (var i=0; i<R; i++){
+		for (var j=0; j<C;j++){
+			var id = "c"+i+"_"+j;
+			document.getElementById(id).src= "img1/0.jpg";
+			piano[i][j]=SFONDO;
+		}
+	}
+
+	countPillole = 0;
+
+	resetEnergia();
+	
+
+	clearInterval(t1);
+	clearInterval(t2);
+
+	clearInterval(t3);
+
+	clearInterval(t4);
+	clearInterval(t5);
+
+	clearInterval(t7);
+	clearInterval(t8);
+	
+}
+
 // posizionamento di ostacoli fissi:
-piano[4][4] = OSTACOLO;
-piano[armaX][armaY] = ARMA;
 
-
-piano[9][2] = FUNGO;
-piano[1][6] = BANANA;
-
-piano[5][5] = SPINE;
-piano[8][7] = SPINE;
 
 function mostraMatriceHTML(){
 	var s = "";
@@ -83,38 +111,275 @@ function mostraMatriceHTML(){
 
  /*************************  AREA DI GIOCO  ************************************/
 
+ var t1;
+ var t2;
+ var t3;
+ var t4;
+ var t5;
 
-function disegnaPiano(){
+ var t7;
+ var t8;
+
+ var num_livello = 0;
+
+function  cambiaLivello(num_livello){
+	 if(num_livello == 2)
+	 	livello2();
+	 if(num_livello == 3)
+	 	livello3();
+	 if(num_livello == 4)
+	 	livello4();
+ }
+
+ /************************************* livello 1 *******************************************/
+
+ function livello1(){
+
+	clear();
+
+	num_livello = 2;
+
+	moveProgressBar();
+
+	document.getElementById("playButton").style.display = 'none'
+
+	play_audio_start();
+
+	document.getElementById("livello").innerHTML= "livello 1"; 
+
+	window.addEventListener('scroll', noScroll);
+
 	for (var i=0; i<R; i++){
 		for (var j=0; j<C;j++){
 			disegnaCella(i,j);
 		}
 	}
+
+	ominoX = 5;
+	ominoY = 0;
+
 	// disegna l'omino in una data posizione
-	disegnaCella(ominoX,ominoY,omino); 
-	// disegna l'arma in una data posizione
-	disegnaCella(armaX,armaY,ARMA);
+	disegnaCella(ominoX,ominoY,ominoDX); 
+
+	for(let i=1; i<=4; i++){
+		generaPillole();
+	}
+	
+
+	for(var k=0; k<5; k++){
+		generaOstacolo();
+	}
+	
+	setTimeout(play_game1,1000)
+
+}
+
+function play_game1(){
 
 
-	setInterval("disegnaCacciatoreBowser()", 500);
-	setInterval("disegnaCacciatoreBoo()", 500);
+	t8 = setInterval("generaPilloleNuove()",15000);
+
+	t2 = setInterval("disegnaCacciatoreBoo()", 500);
+
+	t3 = setInterval("generaFungo()", 10000);
+	t4 = setInterval("generaBanana()", 2000);
+
+	t5 = setInterval("decurtaEnergia()", 2000);
+
+
+}
+
+/********************* livello 2 *****************************/
+
+function livello2(){
+
+	num_livello = 3;
+
+	clear();
+
+	document.getElementById("livello").innerHTML= "livello 2"; 
+
+	window.addEventListener('scroll', noScroll);
+
+	for (var i=0; i<R; i++){
+		for (var j=0; j<C;j++){
+			disegnaCella(i,j);
+		}
+	}
+
+	// disegna l'omino in una data posizione
+	disegnaCella(ominoX,ominoY,ominoDX); 
+
+	for(var k=0; k<10; k++){
+		generaPillole();
+	}
+
+	for(var k=0; k<20; k++){
+		generaOstacolo();
+	}
+	
+	setTimeout(play_game2,5000);
+
+}
+
+function play_game2(){
+
+	t8 = setInterval("generaPilloleNuove()",15000);
+	
+	t1 = setInterval("disegnaCacciatoreBoo()", 500);
+
+	t3 = setInterval("generaFungo()", 10000);
+	t4 = setInterval("generaBanana()", 2000);
+
+	t5 = setInterval("decurtaEnergia()", 1000);
+
+
+}
+
+/********************* livello 3 *****************************/
+
+function livello3(){
+
+	num_livello = 4;
+
+	clear();
+
+	document.getElementById("livello").innerHTML= "livello 3"; 
+
+	window.addEventListener('scroll', noScroll);
+
+	for (var i=0; i<R; i++){
+		for (var j=0; j<C;j++){
+			disegnaCella(i,j);
+		}
+	}
+
+	// disegna l'omino in una data posizione
+	disegnaCella(ominoX,ominoY,ominoDX); 
+
+	for(var k=0; k<15; k++){
+		generaPillole();
+	}
+
+	for(var k=0; k<20; k++){
+		generaOstacolo();
+	}
+	
+	setTimeout(play_game3,5000);
+
+}
+
+function play_game3(){
+
+	t8 = setInterval("generaPilloleNuove()",15000);
+
+	t1 = setInterval("disegnaCacciatoreBoo()", 500);
+	t2 = setInterval("disegnaCacciatoreBowser()", 500);
+
+	t3 = setInterval("generaFungo()", 10000);
+	t4 = setInterval("generaBanana()", 2000);
+
+	t5 = setInterval("decurtaEnergia()", 1000);
+
+
+}
+
+/********************* livello 4 *****************************/
+
+function livello4(){
+
+	num_livello = 5;
+
+	clear();
+
+	document.getElementById("livello").innerHTML= "final level"; 
+
+	window.addEventListener('scroll', noScroll);
+
+	for (var i=0; i<R; i++){
+		for (var j=0; j<C;j++){
+			disegnaCella(i,j);
+		}
+	}
+
+	// disegna l'omino in una data posizione
+	disegnaCella(ominoX,ominoY,ominoDX); 
+
+	for(var k=0; k<20; k++){
+		generaPillole();
+	}
+
+	for(var k=0; k<50; k++){
+		generaOstacolo();
+	}
+	
+	setTimeout(play_game4,2000)
+
+}
+
+function play_game4(){
+
+	t8 = setInterval("generaPilloleNuove()",15000);
+	t7 = setInterval("generaOstacolo();", 500);
+
+	t1 = setInterval("disegnaCacciatoreBowser()", 500);
+	t2 = setInterval("disegnaCacciatoreBoo()", 500);
+	
+
+	t3 = setInterval("generaFungo()", 1000);
+	t4 = setInterval("generaBanana()", 2000);
+
+	t5 = setInterval("decurtaEnergia()", 800);
+   
+   moveProgressBar();
+
+}
+
+
+
+function disegnaPiano(){
+
+	play_audio_start();
+
+	document.getElementById("livello").innerHTML= "livello 1"; 
+
+	window.addEventListener('scroll', noScroll);
+
+	for (var i=0; i<R; i++){
+		for (var j=0; j<C;j++){
+			disegnaCella(i,j);
+		}
+	}
+
+	// disegna l'omino in una data posizione
+	disegnaCella(ominoX,ominoY,ominoDX); 
 
 	for(var k=0; k<5; k++){
 		generaPillole();
 	}
 
-	for(var k=0; k<5; k++){
+	for(var k=0; k<15; k++){
 		generaOstacolo();
 	}
+	
+	setTimeout(play_game,5000)
 
-	setInterval("generaFungo()", 10000);
-	setInterval("generaBanana()", 2000);
+} 
 
-	setInterval("decurtaEnergia()", 1000);
+function play_game(){
+
+
+	 t1 = setInterval("disegnaCacciatoreBowser()", 500);
+	 t2 = setInterval("disegnaCacciatoreBoo()", 500);
+
+	 t3 = setInterval("generaFungo()", 10000);
+	 t4 = setInterval("generaBanana()", 2000);
+
+	 t5 = setInterval("decurtaEnergia()", 1000);
 	
 	moveProgressBar();
-	
-} 
+
+}
 
 
 
@@ -123,6 +388,11 @@ function generaPillole(){
     countPillole ++; //vanno raccolti tutti, meglio contarli
 	generaOggetto(PILLOLA);
 }
+
+function generaPilloleNuove(){
+	generaOggetto(PILLOLA);
+}
+
 
 function generaOstacolo(){
 	generaOggetto(OSTACOLO);
@@ -147,6 +417,8 @@ function generaOggetto(valOggetto){
 	ry = Math.floor( c * C);
 	// utilizzando rx e rc si ha una posizione casuale nel piano di gioco
 	
+	if(piano[rx][ry] == PILLOLA)
+		return;
 	piano[rx][ry] = valOggetto; //posiziona oggetto nella matrice
 	// in rx, ry c'è un nuovo valore quindi meglio ridisegnare la cella
 	disegnaCella(rx,ry);
@@ -157,19 +429,9 @@ function generaOggetto(valOggetto){
 function disegnaCella(i,j,valore=""){
 
 	if(valore!=""){
-		/*if(cacciatoreX==ominoX && cacciatoreY==ominoY){
-			alert("game_over");
-			break;
-		}*/
 		var id = "c"+i+"_"+j;
 		var src = pathImg + valore + ".jpg";
 		document.getElementById(id).src=src;
-
-		
-		/*if(valore==omino){
-			document.getElementById(id).onmouseover = visualizzaSpiegazioniOmino
-			document.getElementById(id).onmouseout = cancellaSpiegazioni
-		}*/
 	}
 	else{
 	var id = "c"+i+"_"+j;
@@ -198,24 +460,35 @@ function disegnaCella(i,j,valore=""){
  /*************************  STATISTICHE DI GIOCO  ************************************/
 
 
-var i = 0;
+
+var t6;
+var w=0;
 function moveProgressBar() {
-  if (i == 0) {
-    i = 1;
-    var elem = document.getElementById("myBar");
-    var width = 10;
-    var id = setInterval(frame, 1000);
-    function frame() {
-      if (width >= 100) {
-        clearInterval(id);
-        i = 0;
+	if(w==0){
+		w=1;
+    	var elem = document.getElementById("myBar");
+    	var width = 10;
+    	var id = setInterval(frame, 1000);
+		t6=id;
+    	function frame() {
+      		if (width >= 100) {
+       			 clearInterval(id);
+        		 w = 0;
       } else {
         width++;
         elem.style.width = width + "%";
         elem.innerHTML = width  + "%";
       }
     }
-  }
+   }
+}
+
+function resetProgressBar(){
+	w=0;
+	let elem = document.getElementById("myBar");
+	clearInterval(t6);
+	elem.style.width = 10 + "%";
+	elem.innerHTML = 10  + "%";
 }
 
 
@@ -228,142 +501,37 @@ function aggiornaEnergia(delta){
 }
 
 function decurtaEnergia(){
-	energia = energia -5;
+	energia = energia -10;
 	aggiornaEnergia(energia);
+	console.log("energia" + energia);
+}
+
+function resetEnergia(){
+	document.getElementById("energia").style.width = 200 + "px";
+	energia = 200;
 }
 
 
 
-
-function disegnaOmino() {
-	disegnaCella(ominoX,ominoY,omino);
-	document.getElementById("posizioneOmino").innerHTML=" coordinate omino: Omino(" + ominoX + "," + ominoY + ")"; 
-} 
-
-
-
-var btn1 = document.getElementById('btn1');	
-btn1.addEventListener("click",generaPillole); 
-
-
-/************************* SPIEGAZIONI  ************************************/
-
-document.getElementById("pillola").addEventListener("mouseover", visualizzaSpiegazioniPillola);
-document.getElementById("pillola").onmouseout = cancellaSpiegazioni
-
-document.getElementById("arma").addEventListener("mouseover", visualizzaSpiegazioniArma);
-document.getElementById("arma").onmouseout = cancellaSpiegazioni
-
-document.getElementById("ostacolo").addEventListener("mouseover", visualizzaSpiegazioniOstacolo);
-document.getElementById("ostacolo").onmouseout = cancellaSpiegazioni
-
-document.getElementById("spine").addEventListener("mouseover", visualizzaSpiegazioniSpine);
-document.getElementById("spine").onmouseout = cancellaSpiegazioni
-
-document.getElementById("fungo").addEventListener("mouseover", visualizzaSpiegazioniFungo);
-document.getElementById("fungo").onmouseout = cancellaSpiegazioni
-
-document.getElementById("banana").addEventListener("mouseover", visualizzaSpiegazioniBanana);
-document.getElementById("banana").onmouseout = cancellaSpiegazioni
-
-
-
-function visualizzaSpiegazioniArma(){
-	var s = '<img src="'+pathImg + ARMA +'.jpg">';  
-	s = s + '<p> arma letale: serve a rompere gli ostacoli </p>' 
-	document.getElementById("spiegazioni").innerHTML= s; 
-	
-}
-
-function visualizzaSpiegazioniOmino(){
-	var s = '<img src="'+pathImg + omino +'.jpg">';  
-	s = s + '<p> Muovi il personaggio con le frecce o con "WASD" </p>'
-	document.getElementById("spiegazioni").innerHTML= s; 
-}
-
-function visualizzaSpiegazioniFungo(){
-	var s = '<img src="'+pathImg + 6 +'.jpg">';  
-	s = s + '<p> ottieni + 5 velocit\u00E0 </p>'
-	document.getElementById("spiegazioni").innerHTML= s; 
-}
-
-function visualizzaSpiegazioniBanana(){
-	var s = '<img src="'+pathImg + 7 +'.jpg">';  
-	s = s + '<p> perdi - 5 velocit\u00E0 </p>'
-	document.getElementById("spiegazioni").innerHTML= s; 
-}
-
-function visualizzaSpiegazioniOstacolo(){
-	var s = '<img src="'+pathImg + 3 +'.jpg">';  
-	s = s + '<p> ti serve un arma per attraversarlo </p>'
-	document.getElementById("spiegazioni").innerHTML= s; 
-}
-
-function visualizzaSpiegazioniPillola(){
-	var s = '<img src="'+pathImg + 1 +'.jpg">';  
-	s = s + '<p> colleziona tutte le pillole per vincere </p>'
-	document.getElementById("spiegazioni").innerHTML= s; 
-}
-
-function visualizzaSpiegazioniSpine(){
-	var s = '<img src="'+pathImg + 5 +'.jpg">';  
-	s = s + '<p>fare attenzione alle spine: tolgono energia! </p>'
-	document.getElementById("spiegazioni").innerHTML= s; 
-}
-
-
-
-
-
-function cancellaSpiegazioni(){
-	document.getElementById("spiegazioni").innerHTML= ""; 
-	
-}
-
-/*
-function Cacciatore (x,y,nome){
-	this.x=x;  // posizione iniziale del cacciatore 
-	this.y=y;  // posizione iniziale del cacciatore 
-    this.nome=nome; // proprietà utilizzata per caricare immagine del cacciatore (es. blu.jpg)
-}
-
-
-Cacciatore.prototype.insegui = function () {
-	
-	var precX = this.x;
-    var precY = this.y;
-
-    // aggiornamento della posizione
-	if (this.x < ominoX) { this.x ++; }
-	if (this.x > ominoX) { this.x --;   }
-
- 	if (this.y < ominoY) { this.y ++; }
- 	if (this.y > ominoY) { this.y --;   }
-
-	document.getElementById("c"+precX+"_"+precY).src   = pathImg + piano[precX][precY ] + ".jpg";
-	document.getElementById("c"+this.x+"_"+this.y).src    = pathImg + this.nome + ".jpg"; 
-
-	// il this.nome coincide con il nome dell’immagine nel file system 
-
-	if (this.x == ominoX && this.y == ominoY ){
-		gameOver();
-	}
-}
-*/
 
 /*************************  CACCIATORI  ************************************/
 
+var scelta;
 function calcolaNuovaPosizioneCacciatoreBowser(){
 	if(cacciatoreX > ominoX) {
+		scelta = false;
 		cacciatoreX --;
 	} else {
+		scelta = true;
 		cacciatoreX++;
 	}
              
 	if(cacciatoreY > ominoY) {
 		cacciatoreY --;
+		scelta = false;
 	} else {
 		cacciatoreY++;
+		scelta = true;
 	}
 }
 
@@ -377,29 +545,184 @@ function calcolaNuovaPosizioneCacciatoreBoo(){
 	if (cacciatoreBooX > ominoX && !dir) {cacciatoreBooX  --;}
 }
 
+
+
 function disegnaCacciatoreBowser(){
 	// si rimette nella posizione precedente quello che c'è nella matrice piano
-	document.getElementById("c" + cacciatoreX + "_" + cacciatoreY).src= "img1/0.jpg" ;
+	if(piano[cacciatoreX][cacciatoreY] == PILLOLA)
+		document.getElementById("c" + cacciatoreX + "_" + cacciatoreY).src= "img1/1.jpg" ;
+	else
+		document.getElementById("c" + cacciatoreX + "_" + cacciatoreY).src= "img1/0.jpg" ;
 	calcolaNuovaPosizioneCacciatoreBowser();
 	// si disegna il cacciatore nella nuova posizione
-	document.getElementById("c" + cacciatoreX + "_" + cacciatoreY).src="img1/blu.jpg";
+	if(scelta == true)
+		document.getElementById("c" + cacciatoreX + "_" + cacciatoreY).src="img1/bowserDX.jpg";
+	else
+		document.getElementById("c" + cacciatoreX + "_" + cacciatoreY).src="img1/bowserSX.jpg";
+
 	if(cacciatoreX==ominoX && cacciatoreY==ominoY){
-		alert("game_over");
+		game_over();
 	}
 }
 
 function disegnaCacciatoreBoo(){
 	// si rimette nella posizione precedente quello che c'è nella matrice piano
-	document.getElementById("c" + cacciatoreBooX + "_" + cacciatoreBooY).src= "img1/0.jpg" ;
+	if(piano[cacciatoreBooX][cacciatoreBooY] == PILLOLA)
+		document.getElementById("c" + cacciatoreBooX + "_" + cacciatoreBooY).src= "img1/1.jpg" ;
+	else
+		document.getElementById("c" + cacciatoreBooX + "_" + cacciatoreBooY).src= "img1/0.jpg" ;
 	calcolaNuovaPosizioneCacciatoreBoo();
 	// si disegna il cacciatore nella nuova posizione
 	document.getElementById("c" + cacciatoreBooX + "_" + cacciatoreBooY).src="img1/boo.jpg";
 	if(cacciatoreBooX==ominoX && cacciatoreBooY==ominoY){
-		alert("game_over");
+		game_over();
 	}
 }
 
 
+
+
+
+
+
+
+
+/*************game over *************** */
+
+function game_over(){
+
+	window.removeEventListener('scroll', noScroll);
+
+	resetProgressBar();
+
+	clear();
+
+	document.getElementById("c0_2").src="img1/game_over_bg.jpg";
+	document.getElementById("c0_3").src="img1/game_over_bg.jpg";
+	document.getElementById("c0_8").src="img1/game_over_bg.jpg";
+	document.getElementById("c0_9").src="img1/game_over_bg.jpg";
+	document.getElementById("c0_11").src="img1/game_over_bg.jpg";
+	document.getElementById("c0_15").src="img1/game_over_bg.jpg";
+	document.getElementById("c0_17").src="img1/game_over_bg.jpg";
+	document.getElementById("c0_18").src="img1/game_over_bg.jpg";
+	document.getElementById("c0_19").src="img1/game_over_bg.jpg";
+
+	document.getElementById("c1_1").src="img1/game_over_bg.jpg";
+	document.getElementById("c1_2").src="img1/game_over_bg.jpg";
+	document.getElementById("c1_3").src="img1/game_over_bg.jpg";
+	document.getElementById("c1_7").src="img1/game_over_bg.jpg";
+	document.getElementById("c1_9").src="img1/game_over_bg.jpg";
+	document.getElementById("c1_11").src="img1/game_over_bg.jpg";
+	document.getElementById("c1_12").src="img1/game_over_bg.jpg";
+	document.getElementById("c1_14").src="img1/game_over_bg.jpg";
+	document.getElementById("c1_15").src="img1/game_over_bg.jpg";
+	document.getElementById("c1_17").src="img1/game_over_bg.jpg";
+
+	document.getElementById("c2_1").src="img1/game_over_bg.jpg";
+	document.getElementById("c2_6").src="img1/game_over_bg.jpg";
+	document.getElementById("c2_9").src="img1/game_over_bg.jpg";
+	document.getElementById("c2_11").src="img1/game_over_bg.jpg";
+	document.getElementById("c2_13").src="img1/game_over_bg.jpg";
+	document.getElementById("c2_15").src="img1/game_over_bg.jpg";
+	document.getElementById("c2_17").src="img1/game_over_bg.jpg";
+	document.getElementById("c2_18").src="img1/game_over_bg.jpg";
+	document.getElementById("c2_19").src="img1/game_over_bg.jpg";
+
+	document.getElementById("c3_1").src="img1/game_over_bg.jpg";
+	document.getElementById("c3_2").src="img1/game_over_bg.jpg";
+	document.getElementById("c3_3").src="img1/game_over_bg.jpg";
+	document.getElementById("c3_6").src="img1/game_over_bg.jpg";
+	document.getElementById("c3_9").src="img1/game_over_bg.jpg";
+	document.getElementById("c3_11").src="img1/game_over_bg.jpg";
+	document.getElementById("c3_15").src="img1/game_over_bg.jpg";
+	document.getElementById("c3_17").src="img1/game_over_bg.jpg";
+
+	document.getElementById("c4_1").src="img1/game_over_bg.jpg";
+	document.getElementById("c4_4").src="img1/game_over_bg.jpg";
+	document.getElementById("c4_6").src="img1/game_over_bg.jpg";
+	document.getElementById("c4_7").src="img1/game_over_bg.jpg";
+	document.getElementById("c4_8").src="img1/game_over_bg.jpg";
+	document.getElementById("c4_9").src="img1/game_over_bg.jpg";
+	document.getElementById("c4_11").src="img1/game_over_bg.jpg";
+	document.getElementById("c4_15").src="img1/game_over_bg.jpg";
+	document.getElementById("c4_17").src="img1/game_over_bg.jpg";
+
+	document.getElementById("c5_2").src="img1/game_over_bg.jpg";
+	document.getElementById("c5_3").src="img1/game_over_bg.jpg";
+	document.getElementById("c5_6").src="img1/game_over_bg.jpg";
+	document.getElementById("c5_9").src="img1/game_over_bg.jpg";
+	document.getElementById("c5_11").src="img1/game_over_bg.jpg";
+	document.getElementById("c5_15").src="img1/game_over_bg.jpg";
+	document.getElementById("c5_17").src="img1/game_over_bg.jpg";
+	document.getElementById("c5_18").src="img1/game_over_bg.jpg";
+	document.getElementById("c5_19").src="img1/game_over_bg.jpg";
+
+	document.getElementById("c7_2").src="img1/game_over_bg.jpg";
+	document.getElementById("c7_3").src="img1/game_over_bg.jpg";
+	document.getElementById("c7_4").src="img1/game_over_bg.jpg";
+	document.getElementById("c7_6").src="img1/game_over_bg.jpg";
+	document.getElementById("c7_10").src="img1/game_over_bg.jpg";
+	document.getElementById("c7_12").src="img1/game_over_bg.jpg";
+	document.getElementById("c7_13").src="img1/game_over_bg.jpg";
+	document.getElementById("c7_15").src="img1/game_over_bg.jpg";
+	document.getElementById("c7_16").src="img1/game_over_bg.jpg";
+
+	document.getElementById("c8_2").src="img1/game_over_bg.jpg";
+	document.getElementById("c8_4").src="img1/game_over_bg.jpg";
+	document.getElementById("c8_7").src="img1/game_over_bg.jpg";
+	document.getElementById("c8_9").src="img1/game_over_bg.jpg";
+	document.getElementById("c8_12").src="img1/game_over_bg.jpg";
+	document.getElementById("c8_15").src="img1/game_over_bg.jpg";
+	document.getElementById("c8_16").src="img1/game_over_bg.jpg";
+
+	
+	document.getElementById("c9_2").src="img1/game_over_bg.jpg";
+	document.getElementById("c9_3").src="img1/game_over_bg.jpg";
+	document.getElementById("c9_4").src="img1/game_over_bg.jpg";
+	document.getElementById("c9_8").src="img1/game_over_bg.jpg";
+	document.getElementById("c9_12").src="img1/game_over_bg.jpg";
+	document.getElementById("c9_13").src="img1/game_over_bg.jpg";
+	document.getElementById("c9_15").src="img1/game_over_bg.jpg";
+	document.getElementById("c9_17").src="img1/game_over_bg.jpg";
+
+	play_audio_death();
+
+	document.getElementById("buttonAppear").innerHTML = '<button onclick="livello1()">play-again</button>';
+
+}
+
+
+//blocca pagina su area di gioco
+function noScroll() {
+  window.scrollTo(0, 120);
+}
+
+/********** GESTIONE AUDIO ************************ */
+
+
+function play_audio_death(){
+ 	var audio = new Audio('audio/Pacman-death-sound.mp3');
+ 	audio.play();
+}
+
+function play_audio_start(){
+	 var audio = new Audio('audio/start-game.mp3');
+	 audio.play();
+}
+
+function play_audio_banana(){
+	 var audio = new Audio('audio/banana.mp3');
+	 audio.play();
+}
+ function play_audio_fungo(){
+ 	var audio = new Audio('audio/mushroom.mp3');
+	audio.play();
+}
+
+function play_audio_ghost(){
+	 var audio = new Audio('audio/pacman_eatghost.mp3');
+     audio.play();
+}
 
 
 

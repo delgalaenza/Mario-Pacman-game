@@ -1,7 +1,9 @@
 
 body{
-    background-color:rgba(0, 0, 0, 0.733);
+    background-color:#2C3E50;
+
 }
+
 
 h1{
     text-align: center;
@@ -56,20 +58,10 @@ h2{
     border-top: 5px solid orange;
 }
 
-.header_elements{
-    float:center;
-    margin:0; 
-    padding:0;
-}
 
-.header_elements_items{
-    display: inline-block;
-    padding: 50px;
-}
 
 .game_container{
     max-width:1200px; 
-    
 }
 
 .game_area{
@@ -98,7 +90,19 @@ h2{
 .sotto{
     height:50px;
     background:lightgray;
-    text-align: left;
+    text-align: center;
 }
+
+.footer{
+    padding-top: 20px;
+}
+
+
+#livello{
+    font-size: large;
+    color: lightgreen;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
 
 

@@ -28,34 +28,29 @@ function checkKeyPress (event){
 
 function controllaCella(x,y){
 	if(energia<=0){
-		alert("game_over");
+		game_over();
 	}
-	switch (piano[x][y]){
-		case ARMA:
-			omino = ominoConSpada;
-			piano[x][y] = SFONDO; 
-			return true; 	
+	switch (piano[x][y]){	
 		case OSTACOLO: 
 		    return false;
-		case SPINE: 
-		    energia = energia -20;
-			aggiornaEnergia(energia);
-			return true;
 		case FUNGO:
+			play_audio_fungo();
 			energia = energia + 5;
 			aggiornaEnergia(energia);
 			piano[x][y] = SFONDO;
 			return true;
 		case BANANA:
+			play_audio_banana();
 			energia = energia - 10;
 			aggiornaEnergia(energia);
 			piano[x][y] = SFONDO;
 			return true;
 		case PILLOLA:
+			play_audio_ghost();
 			piano[x][y] = SFONDO;
 			countPillole--;
 			if (countPillole==0){
-				alert("hai vinto");
+				cambiaLivello(num_livello);
 			}
 			return true;
 		default: 
@@ -65,6 +60,10 @@ function controllaCella(x,y){
 	return true; 
 }
 
+
+
+var orientamento = "";
+
 function sposta (daX,daY, aX,aY){
 	if (controllaCella(aX, aY)){
 		
@@ -72,27 +71,45 @@ function sposta (daX,daY, aX,aY){
 		
 		ominoX= aX;
 		ominoY= aY;
-		disegnaOmino();
+
+		if(orientamento == "dx")
+			disegnaCella(aX,aY,ominoDX);
+		if(orientamento == "sx")
+			disegnaCella(aX,aY,ominoSX)
+		if(orientamento == "su")
+			disegnaCella(aX,aY,ominoSU)
+		if(orientamento == "giu")
+			disegnaCella(aX,aY,ominoGIU)
 	}
 	
 }
+
+//mappa fissa 
+//piano[0] = [0,1,...]
+
+
+
 // l'indice di riga diminuisce
 function su(){
+	orientamento = "su";
 	var newX = (ominoX -1 + R)%R; 
 	sposta (ominoX,ominoY, newX,ominoY);
 }
 
 function sinistra(){
+	orientamento = "sx";
 	var newY = (ominoY -1 + C)%C; 
 	sposta (ominoX,ominoY, ominoX,newY);
 }
 // l'indice di riga aumenta
 function giu(){
+	orientamento = "giu";
 	var newX = (ominoX + 1+ R)%R; 
 	sposta (ominoX,ominoY, newX,ominoY);
 }
 
 function destra(){
+	orientamento = "dx";
 	var newY = (ominoY + 1 + C)%C; 
 	sposta (ominoX,ominoY, ominoX,newY);
 }
